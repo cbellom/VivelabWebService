@@ -13,5 +13,5 @@ class UserSignUp extends Model
    *
    * @var array
    */
-  protected $fillable = ['id', 'name', 'lastname', 'email', 'phone' , 'post-id' , 'post-name'];
+  protected $fillable = ['id', 'name', 'lastname', 'email', 'phone' , 'post_id' , 'post_name'];
 }

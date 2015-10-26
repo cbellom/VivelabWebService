@@ -18,8 +18,8 @@ class CreateUserSignUpsTable extends Migration
             $table->string('lastname');
             $table->string('email');
             $table->string('phone');
-            $table->string('post-id');
-            $table->string('post-name');
+            $table->string('post_id');
+            $table->string('post_name');
             $table->timestamps();
         });
     }

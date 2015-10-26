@@ -45,8 +45,8 @@ class SignUpController extends Controller
             'lastname'   => 'required',
             'email'      => 'required|email',
             'phone'      => 'required',
-            'post-id'    => 'required|numeric',
-            'post-name'  => 'required'
+            'post_id'    => 'required|numeric',
+            'post_name'  => 'required'
             ];
 
         try {
@@ -57,6 +57,14 @@ class SignUpController extends Controller
                     'errors'  => $validator->errors()->all()
                 ];
             }
+            $email = $request->input('email');
+            $post = $request->input('post_id');
+            if($this->hasBeentheUserRegistredFor($email , $post)){
+              return [
+                  'created' => false,
+                  'errors'  => 'El correo '.$request->input('email').' ya ha sido registrado.'
+              ];
+            }
             $user = UserSignUp::create($request->all());
             return ['created' => true,
                     'data'=> $user
@@ -66,6 +74,16 @@ class SignUpController extends Controller
             return \Response::json(['created' => false], 500);
         }
 
+    }
+
+    function hasBeentheUserRegistredFor($email, $post){
+      $userRegistrations = UserSignUp::where('email','=',$email)->get();
+      foreach ($userRegistrations as $user){
+        if($user->post_id == $post){
+          return true;
+        }
+      }
+      return false;
     }
 
     /**
