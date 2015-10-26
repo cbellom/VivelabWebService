@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Model\UserSignUp;
 
 class SignUpController extends Controller
 {
@@ -15,11 +16,7 @@ class SignUpController extends Controller
      */
     public function index()
     {
-        $userSingUp = \App\Model\UserSignUp::get();
-          return response()->json([
-              "users" =>  $userSingUp->toArray(),
-          ],200
-        );
+        return UserSignUp::all();
     }
 
     /**
@@ -29,7 +26,6 @@ class SignUpController extends Controller
      */
     public function create()
     {
-        //
     }
 
     /**
@@ -40,7 +36,36 @@ class SignUpController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if (!is_array($request->all())) {
+            return ['error' => 'request must be an array'];
+        }
+
+        $rules = [
+            'name'       => 'required',
+            'lastname'   => 'required',
+            'email'      => 'required|email',
+            'phone'      => 'required',
+            'post-id'    => 'required|numeric',
+            'post-name'  => 'required'
+            ];
+
+        try {
+            $validator = \Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return [
+                    'created' => false,
+                    'errors'  => $validator->errors()->all()
+                ];
+            }
+            $user = UserSignUp::create($request->all());
+            return ['created' => true,
+                    'data'=> $user
+                   ];
+        } catch (Exception $e) {
+            \Log::info('Error creating user: '.$e);
+            return \Response::json(['created' => false], 500);
+        }
+
     }
 
     /**
